@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amar Kotha | Word Details</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="card center">
+        <h1>💬 Word Details</h1>
+        
+        <div class="badge">
+            👤 <%= comment.user %>
+        </div>
+        
+        <h2>"<%= comment.text %>"</h2>
+        
+        <div class="reaction-container detail-view" data-id="<%= comment._id %>">
+            <form action="/comments/<%= comment._id %>/like?_method=PATCH" method="POST" class="react-form">
+                <button type="submit" class="react-btn like-btn" data-action="like">
+                    <i class="fa-regular fa-thumbs-up"></i>
+                    Likes: <span class="count"><%= comment.likes %></span>
+                </button>
+            </form>
+            <form action="/comments/<%= comment._id %>/dislike?_method=PATCH" method="POST" class="react-form">
+                <button type="submit" class="react-btn dislike-btn" data-action="dislike">
+                    <i class="fa-regular fa-thumbs-down"></i>
+                    Dislikes: <span class="count"><%= comment.dislikes %></span>
+                </button>
+            </form>
+        </div>
+        
+        <br>
+        
+        <div style="display:flex;justify-content:center;gap:15px;">
+            <a href="/comments/<%= comment._id %>/edit" class="btn warning">Edit</a>
+            <form action="/comments/<%= comment._id %>?_method=DELETE" method="POST">
+                <button class="btn danger">Delete</button>
+            </form>
+            <a href="/comments" class="btn secondary">All Comments</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.react-form').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const actionUrl = form.getAttribute('action');
+            const button = form.querySelector('.react-btn');
+            
+            button.classList.add('submitting');
+            
+            try {
+                const response = await fetch(actionUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    const container = form.closest('.reaction-container');
+                    if (container) {
+                        const likeCount = container.querySelector('.like-btn .count');
+                        const dislikeCount = container.querySelector('.dislike-btn .count');
+                        
+                        const oldLikes = parseInt(likeCount.textContent);
+                        const oldDislikes = parseInt(dislikeCount.textContent);
+                        
+                        likeCount.textContent = data.likes;
+                        dislikeCount.textContent = data.dislikes;
+                        
+                        const clickedBtn = form.querySelector('.react-btn');
+                        clickedBtn.classList.add('pop-animation');
+                        setTimeout(() => clickedBtn.classList.remove('pop-animation'), 450);
+                        
+                        if (data.likes > oldLikes && oldDislikes > data.dislikes) {
+                            container.querySelector('.dislike-btn').classList.add('shrink-animation');
+                            setTimeout(() => container.querySelector('.dislike-btn').classList.remove('shrink-animation'), 450);
+                        } else if (data.dislikes > oldDislikes && oldLikes > data.likes) {
+                            container.querySelector('.like-btn').classList.add('shrink-animation');
+                            setTimeout(() => container.querySelector('.like-btn').classList.remove('shrink-animation'), 450);
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error('Error:', err);
+            } finally {
+                button.classList.remove('submitting');
+            }
+        });
+    });
+</script>
+</body>
+</html>

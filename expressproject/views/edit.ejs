@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amar Kotha | Edit Words</title>
+
+    <link rel="stylesheet" href="/style.css">
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Header -->
+    <div class="top-bar">
+
+        <div>
+            <h1 class="title">
+                ✏️ Edit Words
+            </h1>
+
+            <p class="subtitle">
+                Refine your thoughts and update your entry.
+            </p>
+        </div>
+
+        <a href="/comments" class="btn secondary">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back
+        </a>
+
+    </div>
+
+    <!-- Edit Form -->
+    <div class="card">
+
+        <form
+            action="/comments/<%= comment._id %>?_method=PATCH"
+            method="POST">
+
+            <label>
+                <i class="fa-solid fa-user"></i>
+                Username
+            </label>
+
+            <input
+                type="text"
+                name="user"
+                value="<%= comment.user %>"
+                required
+            >
+
+            <label>
+                <i class="fa-solid fa-comment"></i>
+                Comment
+            </label>
+
+            <textarea
+                name="text"
+                required><%= comment.text %></textarea>
+
+            <label>
+                <i class="fa-solid fa-heart"></i>
+                Likes
+            </label>
+
+            <input
+                type="number"
+                name="likes"
+                value="<%= comment.likes %>"
+                min="0"
+            >
+
+            <div
+                style="
+                display:flex;
+                gap:15px;
+                margin-top:20px;
+                flex-wrap:wrap;
+                ">
+
+                <button class="btn warning">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Update Comment
+                </button>
+
+                <a href="/comments" class="btn primary">
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

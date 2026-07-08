@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amar Kotha</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="top-bar">
+        <div>
+            <h1 class="title">💬 Amar Kotha</h1>
+            <p class="subtitle">poro,lekho and tumar kotha bolo</p>
+        </div>
+        <div class="actions">
+            <a href="/" class="btn secondary">
+                <i class="fa-solid fa-house"></i>
+                Dashboard
+            </a>
+            <a href="/comments/new" class="btn success">
+                <i class="fa-solid fa-plus"></i>
+                New Comment
+            </a>
+        </div>
+    </div>
+
+    <% if(comments.length===0){ %>
+        <div class="card center">
+            <h2>No thoughts posted yet.</h2>
+            <br>
+            <a href="/comments/new" class="btn success">Add First Entry</a>
+        </div>
+    <% } %>
+
+    <% comments.forEach(comment=>{ %>
+        <div class="card">
+            <div class="comment">
+                <div class="comment-info">
+                    <div style="display:flex;align-items:center;gap:18px;">
+                        <div style="
+                        width:60px;
+                        height:60px;
+                        border-radius:50%;
+                        background:linear-gradient(135deg,#7c3aed,#2563eb);
+                        display:flex;
+                        justify-content:center;
+                        align-items:center;
+                        color:white;
+                        font-size:24px;
+                        font-weight:bold;
+                        flex-shrink:0;">
+                            <%= comment.user.charAt(0).toUpperCase() %>
+                        </div>
+                        <div style="flex-grow: 1;">
+                            <h2><%= comment.user %></h2>
+                            <p style="margin-bottom: 12px;"><%= comment.text %></p>
+                            <div class="reaction-container" data-id="<%= comment._id %>">
+                                <form action="/comments/<%= comment._id %>/like?_method=PATCH" method="POST" class="react-form">
+                                    <button type="submit" class="react-btn like-btn" data-action="like">
+                                        <i class="fa-regular fa-thumbs-up"></i>
+                                        <span class="count"><%= comment.likes %></span>
+                                    </button>
+                                </form>
+                                <form action="/comments/<%= comment._id %>/dislike?_method=PATCH" method="POST" class="react-form">
+                                    <button type="submit" class="react-btn dislike-btn" data-action="dislike">
+                                        <i class="fa-regular fa-thumbs-down"></i>
+                                        <span class="count"><%= comment.dislikes %></span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="actions">
+                    <a href="/comments/<%= comment._id %>" class="btn primary">
+                        <i class="fa-solid fa-eye"></i> View
+                    </a>
+                    <a href="/comments/<%= comment._id %>/edit" class="btn warning">
+                        <i class="fa-solid fa-pen"></i> Edit
+                    </a>
+                    <form class="delete-form" action="/comments/<%= comment._id %>?_method=DELETE" method="POST">
+                        <button class="btn danger">
+                            <i class="fa-solid fa-trash"></i> Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    <% }) %>
+</div>
+
+<script>
+    document.querySelectorAll('.react-form').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const actionUrl = form.getAttribute('action');
+            const button = form.querySelector('.react-btn');
+            
+            button.classList.add('submitting');
+            
+            try {
+                const response = await fetch(actionUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    const container = form.closest('.reaction-container');
+                    if (container) {
+                        const likeCount = container.querySelector('.like-btn .count');
+                        const dislikeCount = container.querySelector('.dislike-btn .count');
+                        
+                        const oldLikes = parseInt(likeCount.textContent);
+                        const oldDislikes = parseInt(dislikeCount.textContent);
+                        
+                        likeCount.textContent = data.likes;
+                        dislikeCount.textContent = data.dislikes;
+                        
+                        const clickedBtn = form.querySelector('.react-btn');
+                        clickedBtn.classList.add('pop-animation');
+                        setTimeout(() => clickedBtn.classList.remove('pop-animation'), 450);
+                        
+                        if (data.likes > oldLikes && oldDislikes > data.dislikes) {
+                            container.querySelector('.dislike-btn').classList.add('shrink-animation');
+                            setTimeout(() => container.querySelector('.dislike-btn').classList.remove('shrink-animation'), 450);
+                        } else if (data.dislikes > oldDislikes && oldLikes > data.likes) {
+                            container.querySelector('.like-btn').classList.add('shrink-animation');
+                            setTimeout(() => container.querySelector('.like-btn').classList.remove('shrink-animation'), 450);
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error('Error:', err);
+            } finally {
+                button.classList.remove('submitting');
+            }
+        });
+    });
+</script>
+</body>
+</html>
