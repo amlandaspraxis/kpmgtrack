@@ -1,0 +1,81 @@
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="nav-container">
+    <a class="nav-brand" (click)="scrollToSection('home')">
+      <span>Amlan</span>
+    </a>
+
+    <ul class="nav-links">
+      <li>
+        <a [class.active]="activeSection() === 'home'" (click)="scrollToSection('home')">Home</a>
+      </li>
+      <li>
+        <a [class.active]="activeSection() === 'about'" (click)="scrollToSection('about')">About</a>
+      </li>
+      <li>
+        <a [class.active]="activeSection() === 'contact'" (click)="scrollToSection('contact')">Contact</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+
+<main class="container">
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <span class="hero-badge">Welcome to my portfolio</span>
+    <h1 class="hero-title">
+      Hi, I'm <span class="highlight">Amlan</span>
+    </h1>
+    <p class="hero-subtitle">
+      A passionate Cybersecurity engineer creating simple, elegant, and effective digital experiences.
+    </p>
+
+    <div class="hero-buttons">
+      <button class="btn btn-primary" (click)="scrollToSection('contact')">Get in Touch</button>
+      <button class="btn btn-secondary" (click)="scrollToSection('about')">Learn More</button>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="section" id="about">
+    <h2 class="section-title">About Me</h2>
+    <p class="section-desc">
+      I specialize in Cybersecurity engineering and web development, bringing clean designs, robust security, and
+      efficient solutions to life.
+    </p>
+
+    <div class="cards-grid">
+      <div class="card">
+        <h3>Cybersecurity</h3>
+        <p>Expertise in threat analysis, security auditing, and building resilient web infrastructure.</p>
+      </div>
+      <div class="card">
+        <h3>Performance</h3>
+        <p>Building lightweight, fast-loading, accessible, and responsive user experiences.</p>
+      </div>
+      <div class="card">
+        <h3>Clean Code</h3>
+        <p>Focusing on readable, maintainable, and scalable architecture with minimal overhead.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="section" id="contact">
+    <h2 class="section-title">Contact</h2>
+    <p class="section-desc">
+      Feel free to reach out for collaborations, security inquiries, or just a friendly chat!
+    </p>
+
+    <div class="contact-box">
+      <p><strong>Email:</strong> amlan&#64;gmail.com</p>
+      <p><strong>Location:</strong> India</p>
+      <button class="btn btn-primary" (click)="scrollToSection('home')">Back to Home ↑</button>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>© 2026 Amlan. All rights reserved.</p>
+</footer>
